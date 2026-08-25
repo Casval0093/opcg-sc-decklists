@@ -16,6 +16,17 @@ const FORBIDDEN_KEYS = Object.freeze([
   "placement",
   "rank",
 ]);
+const ALLOWED_KEYS = Object.freeze([
+  "schemaVersion",
+  "leader",
+  "mainCounts",
+  "mainSize",
+  "date",
+  "eventName",
+  "eventType",
+  "gameplayHash",
+  "source",
+]);
 
 function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -25,6 +36,11 @@ export function assertPublicDecklist(record) {
   if (!isRecord(record)) throw new Error("decklist must be an object");
   for (const key of FORBIDDEN_KEYS) {
     if (Object.hasOwn(record, key)) {
+      throw new Error(`${key} is not allowed in the public catalog`);
+    }
+  }
+  for (const key of Object.keys(record)) {
+    if (!ALLOWED_KEYS.includes(key)) {
       throw new Error(`${key} is not allowed in the public catalog`);
     }
   }
@@ -51,6 +67,17 @@ export function assertPublicDecklist(record) {
   if (typeof record.gameplayHash !== "string" || !/^sha256:[0-9a-f]{64}$/u.test(record.gameplayHash)) {
     throw new Error("gameplayHash must be sha256:<hex>");
   }
+  if (record.source !== "bandaimatch-plaza") {
+    throw new Error("source must be bandaimatch-plaza");
+  }
 }
 
-export { ALLOWED_EVENT_TYPES, MAIN_SIZE };
+export function serializePublicDecklist(record) {
+  const ordered = {};
+  for (const key of ALLOWED_KEYS) {
+    ordered[key] = record[key];
+  }
+  return `${JSON.stringify(ordered, null, 2)}\n`;
+}
+
+export { ALLOWED_EVENT_TYPES, ALLOWED_KEYS, FORBIDDEN_KEYS, MAIN_SIZE };
