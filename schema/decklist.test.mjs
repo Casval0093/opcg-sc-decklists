@@ -28,6 +28,14 @@ test("W and player identity are catalog-illegal", () => {
   assert.throws(() => assertPublicDecklist(list({ placement: "四强" })), /not allowed/);
 });
 
+test("unknown keys are catalog-illegal", () => {
+  assert.throws(() => assertPublicDecklist(list({ note: "secret" })), /not allowed/);
+});
+
+test("source must be bandaimatch-plaza", () => {
+  assert.throws(() => assertPublicDecklist(list({ source: "jihuanshe" })), /bandaimatch-plaza/);
+});
+
 test("non-whitelist event types are catalog-illegal", () => {
   assert.throws(() => assertPublicDecklist(list({ eventType: "店赛" })), /whitelist/);
 });

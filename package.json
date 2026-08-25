@@ -6,6 +6,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test tests/*.test.mjs schema/*.test.mjs"
+    "test": "node --test schema/*.test.mjs",
+    "validate": "node schema/validate_catalog.mjs"
   }
 }
